@@ -1,0 +1,42 @@
+name: Build GhostLock aarch64
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build aarch64 exploit binary
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Android NDK
+        run: |
+          SDKMANAGER=$(find $ANDROID_HOME/cmdline-tools -name sdkmanager 2>/dev/null | sort -V | tail -n 1)
+          echo "sdkmanager: $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses || true
+          "$SDKMANAGER" --install "ndk;29.0.13113456" || true
+          ls "$ANDROID_HOME/ndk" || true
+
+      - name: Build ghostlock
+        run: |
+          export ANDROID_NDK_HOME="$ANDROID_HOME/ndk/29.0.13113456"
+          export ANDROID_NDK_ROOT="$ANDROID_NDK_HOME"
+          make NDK_ROOT="$ANDROID_NDK_HOME"
+          ls -l ghostlock
+          sha256sum ghostlock
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ghostlock-aarch64
+          path: ghostlock
+          retention-days: 14
