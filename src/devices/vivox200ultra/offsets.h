@@ -1,6 +1,11 @@
 /* vivo X200 Ultra (V2454A/PD2454) — SM8750, kernel 6.6.89-android15-8
  * C ashmem (ashmem_misc), traditional security_hook_heads, waiter_word=0
- * kernel_phys_load: unknown (iomem masked, no su) */
+ * kernel_phys_load: unknown (iomem masked, no su)
+ *
+ * off_configfs_read_iter corrected to the real function entry (0x48CBB8).
+ * Upstream carried 0x48CEDC, which points into the middle of the function and
+ * makes the CFI route fail with errno=22. Confirmed on-device by live kallsyms.
+ */
 
 OFFSETS_ENTRY("6.6.89-android15-8-g1f71897ac249-abogki467805059-4k",
   .kernel_phys_load=0, STRUCT_OFFSETS_6_6,
@@ -14,7 +19,7 @@ OFFSETS_ENTRY("6.6.89-android15-8-g1f71897ac249-abogki467805059-4k",
   .off_ashmem_ioctl=0x00C814B4, .off_ashmem_compat_ioctl=0x00C81B70,
   .off_ashmem_mmap=0x00C81BC4, .off_ashmem_open=0x00C81DE4,
   .off_ashmem_release=0x00C81E6C, .off_ashmem_show_fdinfo=0x00C81EF8,
-  .off_configfs_read_iter=0x0048CEDC, .off_configfs_bin_write_iter=0x0048D0E4,
+  .off_configfs_read_iter=0x0048CBB8, .off_configfs_bin_write_iter=0x0048D0E4,
   .off_copy_splice_read=0x004113D4, .off_noop_llseek=0x003C4174,
   .off_cap_capable_active=0,
   .off_slide_nfulnl_logger=0x02102268, .off_slide_loggers_0_1=0x021021C0,
